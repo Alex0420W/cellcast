@@ -1,0 +1,19 @@
+{
+  "anchor_drug": "Lomustine",
+  "endpoint_drug": "Dasatinib",
+  "anchor_endpoint_cosdist": 0.02474808692932129,
+  "head_output_l2_endpoint_to_endpoint": 0.1384263038635254,
+  "head_output_l2_max_from_midpoint": 0.07075875252485275,
+  "head_output_l2_min_from_midpoint": 0.0,
+  "head_output_norm_at_midpoint": 2.0880839824676514,
+  "jacobian_frobenius_norm": 1.5513218641281128,
+  "jacobian_operator_norm_largest_sv": 0.8312488794326782,
+  "jacobian_smallest_sv": 4.5760244482551116e-09,
+  "jacobian_median_sv": 1.0678601114477715e-08,
+  "head_parameter_l2_norm": 53.41125577044293,
+  "head_parameter_count_total": 6681841,
+  "head_parameter_count_trainable": 6681841,
+  "input_perturb_norm_a_to_b": 2.5863404273986816,
+  "head_response_norm_to_a_to_b_perturb": 0.05159517377614975,
+  "n_interp": 100
+}

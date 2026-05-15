@@ -1,0 +1,102 @@
+{
+  "n_conditions": 456,
+  "n_genes": 7153,
+  "overall": {
+    "flat_var_target": 0.0074153258465230465,
+    "flat_var_residual": 0.006790645886212587,
+    "flat_var_ratio": 0.9157582588763292,
+    "per_condition_var_target": 0.007339365780353546,
+    "per_condition_var_residual": 0.006716160569339991,
+    "per_condition_var_ratio": 0.9950414299964905,
+    "per_gene_var_target": 0.007134335581213236,
+    "per_gene_var_residual": 0.006755440030246973,
+    "per_gene_var_ratio": 0.9613303542137146
+  },
+  "per_cell_line": {
+    "A549": {
+      "flat_var_target": 0.008694869466125965,
+      "flat_var_residual": 0.007958834059536457,
+      "flat_var_ratio": 0.9153483086253333,
+      "per_condition_var_target": 0.00857764482498169,
+      "per_condition_var_residual": 0.007841349579393864,
+      "per_condition_var_ratio": 0.9609174132347107,
+      "per_gene_var_target": 0.008020227774977684,
+      "per_gene_var_residual": 0.007872854359447956,
+      "per_gene_var_ratio": 130.23985290527344
+    },
+    "K562": {
+      "flat_var_target": 0.0088451337069273,
+      "flat_var_residual": 0.008138327859342098,
+      "flat_var_ratio": 0.9200909934202975,
+      "per_condition_var_target": 0.008824007585644722,
+      "per_condition_var_residual": 0.008116659708321095,
+      "per_condition_var_ratio": 0.9591997265815735,
+      "per_gene_var_target": 0.008152405731379986,
+      "per_gene_var_residual": 0.008050150237977505,
+      "per_gene_var_ratio": 145.81907653808594
+    },
+    "MCF7": {
+      "flat_var_target": 0.00470351567491889,
+      "flat_var_residual": 0.004274273291230202,
+      "flat_var_ratio": 0.9087400971197804,
+      "per_condition_var_target": 0.004616445396095514,
+      "per_condition_var_residual": 0.004190472885966301,
+      "per_condition_var_ratio": 1.065007209777832,
+      "per_gene_var_target": 0.00436845887452364,
+      "per_gene_var_residual": 0.0042149960063397884,
+      "per_gene_var_ratio": 0.9906632900238037
+    }
+  },
+  "per_dose": {
+    "10.0": {
+      "flat_var_target": 0.004244348034262657,
+      "flat_var_residual": 0.003996846731752157,
+      "flat_var_ratio": 0.941686850250607,
+      "per_condition_var_target": 0.00423389533534646,
+      "per_condition_var_residual": 0.0039868406020104885,
+      "per_condition_var_ratio": 0.9486563801765442,
+      "per_gene_var_target": 0.004091641400009394,
+      "per_gene_var_residual": 0.003950347658246756,
+      "per_gene_var_ratio": 0.9669610857963562
+    },
+    "100.0": {
+      "flat_var_target": 0.0052435267716646194,
+      "flat_var_residual": 0.004936998710036278,
+      "flat_var_ratio": 0.9415416236101278,
+      "per_condition_var_target": 0.005226842127740383,
+      "per_condition_var_residual": 0.004921417683362961,
+      "per_condition_var_ratio": 0.9638915657997131,
+      "per_gene_var_target": 0.005045710131525993,
+      "per_gene_var_residual": 0.0048723225481808186,
+      "per_gene_var_ratio": 0.9691162705421448
+    },
+    "1000.0": {
+      "flat_var_target": 0.006626713089644909,
+      "flat_var_residual": 0.00614610780030489,
+      "flat_var_ratio": 0.9274745589799223,
+      "per_condition_var_target": 0.0066099646501243114,
+      "per_condition_var_residual": 0.006129855290055275,
+      "per_condition_var_ratio": 0.9852992296218872,
+      "per_gene_var_target": 0.006317291408777237,
+      "per_gene_var_residual": 0.006075250916182995,
+      "per_gene_var_ratio": 0.96631920337677
+    },
+    "10000.0": {
+      "flat_var_target": 0.013541467487812042,
+      "flat_var_residual": 0.012080243788659573,
+      "flat_var_ratio": 0.8920926627437064,
+      "per_condition_var_target": 0.01328676100820303,
+      "per_condition_var_residual": 0.011826527304947376,
+      "per_condition_var_ratio": 1.0823184251785278,
+      "per_gene_var_target": 0.012668656185269356,
+      "per_gene_var_residual": 0.011976263485848904,
+      "per_gene_var_ratio": 0.9616138935089111
+    }
+  },
+  "interpretation": {
+    "ceiling_low_threshold": 0.1,
+    "ceiling_high_threshold": 0.3,
+    "ratio": 0.9950414299964905,
+    "headroom_remaining_after_baseline": 0.0049585700035095215
+  }
+}

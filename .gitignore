@@ -223,3 +223,6 @@ runs/
 .venv/
 __pycache__/
 *.pyc
+*.ckpt
+# 4A: per-condition residual array is 38MB; regenerable from scripts/diag/p5_*.py
+results/4a_diagnostics/p5/p5_residual.npz
