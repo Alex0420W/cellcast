@@ -1,0 +1,95 @@
+# CellCast v0 — RESIDUAL TARGET reframe (M4B.1)
+#
+# Identical to cellcast_v0.yaml except:
+#   - task: drug_response_residual (label = full LFC - stratum_mean)
+#   - run name: cellcast_v0_residual
+#
+# Strict apples-to-apples test of the loss-reframe hypothesis. All other
+# hyperparameters (LR, schedule, warmup, batch, epochs, frozen-backbone +
+# trainable head + 4 trainable dose rows) match the M3-corrected run.
+
+name: cellcast_v0_residual_seed_1234
+root: "."
+model_dir: ${root}/runs/${name}
+seed: 1234
+
+# ----- task ------------------------------------------------------------------
+task:
+  _target_: src.tasks.drug_response_residual.DrugResponseResidualTask  # documentation; the actual entry point is scripts/train_residual.py
+  _partial_: True
+  name: drug_response_residual
+  seed: ${seed}
+  num_HVGs: 7153
+  encoder_input_max_seq_len: 1500
+  # Residual is computed at parquet-load time:
+  #   residual = full_lfc - stratum_mean[(cell_line, dose)]
+  # where stratum_mean is the per-(cl, dose) mean over the 135 INNER-train
+  # drugs (the 90% used for model training, NOT including val drugs).
+  # This avoids leakage from val drugs into the residual baseline.
+  residual_stratum_source: inner_train_drugs
+
+# ----- tokenizer -------------------------------------------------------------
+tokenizer:
+  tokenizer_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+  extra_special_tokens:
+    - <DOSE_10nM>
+    - <DOSE_100nM>
+    - <DOSE_1000nM>
+    - <DOSE_10000nM>
+
+# ----- model -----------------------------------------------------------------
+model:
+  pretrained_kwargs:
+    pretrained_model_name_or_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+
+  # Frozen backbone + trainable head + 4 trainable dose-token embedding rows.
+  # Identical setup to M3 (per DECISIONS.md 2026-05-14 "Dose embedding init +
+  # trainable rows").
+  freeze_backbone: true
+
+  # Same head shape and dropout as M3.
+  scalars_prediction_head:
+    num_classes: 7153
+    layers: [768, 768]
+    dropout: 0.1
+
+# ----- optimizer / schedule --------------------------------------------------
+module:
+  opt_callable:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 1.0e-4
+    weight_decay: 0.01
+
+  lr_sch_callable:
+    _target_: mammal.lr_schedulers.cosine_annealing_with_warmup_lr_scheduler
+    _partial_: True
+    T_max: 10000
+    num_warmup_steps: 25
+    eta_min_factor: 0.1
+
+  model_dir: ${model_dir}
+  best_epoch_source:
+    monitor: val/pcorr_macro      # NOTE: this metric is reconstructed full-LFC pcorr (model_residual_pred + stratum_mean vs true_LFC)
+    mode: max
+
+# ----- data ------------------------------------------------------------------
+data:
+  parquet_path: ${root}/data/sciplex/processed/cellcast_v0.parquet
+  hvg_path:     ${root}/data/sciplex/processed/hvg_genes.txt
+  splits_path:  ${root}/data/sciplex/processed/splits.json
+  batch_size: 16
+  num_workers: 2
+
+# ----- trainer ---------------------------------------------------------------
+trainer:
+  max_epochs: 8                # matches M3 corrected run
+  default_root_dir: ${model_dir}
+  accelerator: "auto"
+  devices: 1
+  num_nodes: 1
+  num_sanity_val_steps: 2
+  accumulate_grad_batches: 1
+  log_every_n_steps: 1
+
+evaluate: false

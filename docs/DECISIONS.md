@@ -141,3 +141,25 @@ Decision: per-cell-line macro Pearson is the primary metric for evaluating drug-
 Top-50 DEG direction accuracy and per-cell-line pcorr together form the meaningful evaluation pair.
 
 Caught by: M4A P5 diagnosis (residual ceiling 91.6% but per-cell-line pcorr near zero) and P6 confirmation (a 9M-param MLP beats CellCast v0 by 0.06–0.13 per-cell-line). The overall-pcorr framing was hiding the real picture.
+
+---
+
+## 2026-05-14 — M4B.1 residual reframe: null result via degenerate solution
+
+Context: M4B.1 tested whether residual-to-stratum-mean target reframe alone (head-only training, frozen MAMMAL encoder) would unlock drug-specific signal extraction. Predicted per-CL pcorr 0.02–0.05; result landed at 0.05/0.05/0.09 per-CL — appearing to confirm the hypothesis quantitatively.
+
+Interpretation: the result is mechanistically a null. The trained head learned to predict approximately zero residual everywhere, which under prediction reconstruction (model_output + stratum_mean) recovers the baseline exactly (Δ < 0.001 at every cell line). Val pcorr_resid peaks at +0.004 at epoch 4 and decays — the head correctly identified that the frozen encoder provides essentially no exploitable signal at <MASK>, and degenerated to the zero-residual prediction that minimizes MSE.
+
+The residual reframe by itself does not address the L2 (encoder→<MASK> routing) bottleneck identified in M4A. Reframing the loss without architectural changes leaves the model unable to access drug-specific information, regardless of target.
+
+Implication for M4B.2: LoRA on the encoder is required to open the L2 bottleneck. M4B.2 must demonstrate that LoRA-adapted MAMMAL clears the chemistry-only floor (P6 at 0.06–0.12 per-CL) to justify the foundation-model approach. Below P6 would be a project-defining negative result; well above P6 would justify the architecture.
+
+Lesson on pre-registration: numbers landing in a predicted zone is necessary but not sufficient for hypothesis confirmation. Investigate the mechanism, not just the magnitude. Without per-cell-line decomposition and the val_pcorr_resid trajectory analysis, this would have been miscategorized as a partial success.
+
+---
+
+## 2026-05-14 — Engineering note: precomputed lookups vs Lightning sanity checks
+
+During M4B.1, an initial implementation precomputed a stratum_mean lookup indexed by global condition position. This broke during Lightning's pre-training sanity check (which subsamples to 2 batches), since the global indices didn't align with the subsampled batches. Fixed by looking up stratum_mean per-row from batch metadata.
+
+Going forward: when sample-level metadata needs to be retrieved during training/validation, retrieve it from the batch itself, not from an external precomputed array indexed by global position. Lightning's subsampling for sanity checks, distributed training, and gradient accumulation all break global-index assumptions.
