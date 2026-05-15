@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# CellCast: large datasets, runs, venv
+data/
+runs/
+.venv/
+__pycache__/
+*.pyc
