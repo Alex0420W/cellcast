@@ -129,3 +129,15 @@ Caught by: the halt tripwire firing exactly when it should have, and the agent d
 ### Addendum 2026-05-14 — HVG min_cells filter
 
 cell_ranger HVG selection failed at the quantile-binning step because many genes have ~zero mean expression in the per-cell-line control subsets, causing bin-edge collisions. Resolved by applying `sc.pp.filter_genes(min_cells=10)` to the per-cell-line control subset copy used for HVG selection. This filter is local to the HVG step only — the global gene pool used for LFC computation and the input gene-rank list remains unfiltered. Threshold of 10 cells = 0.13–0.26% of each cell line's control population (A549 = 3,773; K562 = 3,935; MCF7 = 7,786). Conservative: drops only genes with essentially no expression signal in controls.
+
+---
+
+## 2026-05-14 — Per-cell-line macro Pearson is the primary metric
+
+Context: Overall macro Pearson aggregates across cell lines and is dominated by between-cell-line variance. Any model that distinguishes A549 / K562 / MCF7 from the input expression profile inherits a meaningful share of this signal without learning anything drug-specific. CellCast v0 achieved overall pcorr +0.127 with per-cell-line pcorr ≈ 0 — i.e., it looked "okay" overall while learning nothing about drugs.
+
+Decision: per-cell-line macro Pearson is the primary metric for evaluating drug-conditioning. Overall is reported for continuity and historical comparison but is interpretive context, not the headline.
+
+Top-50 DEG direction accuracy and per-cell-line pcorr together form the meaningful evaluation pair.
+
+Caught by: M4A P5 diagnosis (residual ceiling 91.6% but per-cell-line pcorr near zero) and P6 confirmation (a 9M-param MLP beats CellCast v0 by 0.06–0.13 per-cell-line). The overall-pcorr framing was hiding the real picture.

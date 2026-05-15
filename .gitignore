@@ -226,3 +226,6 @@ __pycache__/
 *.ckpt
 # 4A: per-condition residual array is 38MB; regenerable from scripts/diag/p5_*.py
 results/4a_diagnostics/p5/p5_residual.npz
+# P6: per-condition test predictions (residual + reconstructed full LFC) is 38MB;
+# regenerable from `python scripts/evaluate_fingerprint.py`
+results/p6_predictions.npz
