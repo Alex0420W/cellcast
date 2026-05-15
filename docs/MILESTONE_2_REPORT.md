@@ -108,12 +108,14 @@ PubChem deprecated `CanonicalSMILES` / `IsomericSMILES` property names in 2025. 
 
 This is the surface we modify in milestone 3. All paths under `~/biomed-multi-alignment/`.
 
+> **Erratum (2026-05-14, surfaced during 3A spike):** Earlier conversation notes referenced an embedding dimension of 1024 for `ma-ted-458m`. The actual loaded checkpoint reports `t5_model.get_input_embeddings().embedding_dim = 768`. The head input dim for the CellCast regression head is therefore **768**, not 1024. See `results/3a_spike_test.md`.
+
 | Concern | File | Lines | Current behavior | Milestone 3 change |
 |---|---|---|---|---|
 | Encoder prompt builder | `mammal/examples/cell_line_drug_response/task.py` | 146–152 | `<MASK> + SMILES + ranked genes + <EOS>` (no dose, no cell-line token) | Add dose encoding (token or scalar literal) |
 | Encoder length budget | same file | 140–143 | 1500 tokens total, 200 reserved for SMILES, 6 for format, ~1294 for genes | Reserve ~10 more for dose |
 | Head config | `mammal/model.py` | 151–163 | `num_classes` from `scalars_prediction_head.num_classes`, defaults to 1 | Set to `G` (num HVGs) via YAML |
-| Head class | `fuse/dl/models/heads/common.py` | 115–155 | `ClassifierMLP`: Linear+ReLU+Dropout stack with final `Linear(last, num_classes)` | No code change; only widening |
+| Head class | `fuse/dl/models/heads/common.py` | 115–155 | `ClassifierMLP(in_ch=**768**, layers=…, num_classes=…)` | No code change; only widening |
 | `<MASK>` slice | `mammal/examples/cell_line_drug_response/task.py` | 228–230 | `scalars_preds[:, 0]` → `[B]` | Change to `scalars_preds[:, 0, :]` → `[B, G]` |
 | Squeeze | `mammal/model.py` | 263 | `.squeeze(dim=2)` collapses `[B,S,1]→[B,S]` | No-op when `num_classes>1`; safe to leave |
 | Loss | `mammal/losses.py` | 91–147 | `ScalarsPredictionsLoss` is shape-agnostic; asserts `preds.shape == targets.shape`, masks via `LABELS_SCALARS_VALID_MASK`, default MSE | No code change. Per-gene weighting would need a subclass |

@@ -1,0 +1,98 @@
+# CellCast v0 — first trainable config
+#
+# This is "does it train" not "is it tuned". LR / schedule / epochs are
+# placeholders intended to be revisited after the first run produces a loss
+# curve.
+
+name: cellcast_v0_seed_1234
+root: "."
+model_dir: ${root}/runs/${name}
+seed: 1234
+
+# ----- task ------------------------------------------------------------------
+task:
+  _target_: src.tasks.drug_response_vector.DrugResponseVectorTask  # may not exist yet — smoke test imports the helpers, not the class
+  _partial_: True
+  name: drug_response_vector
+  seed: ${seed}
+  num_HVGs: 7153                            # = len(data/sciplex/processed/hvg_genes.txt)
+  encoder_input_max_seq_len: 1500
+
+# ----- tokenizer -------------------------------------------------------------
+tokenizer:
+  tokenizer_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+  extra_special_tokens:
+    - <DOSE_10nM>
+    - <DOSE_100nM>
+    - <DOSE_1000nM>
+    - <DOSE_10000nM>
+
+# ----- model -----------------------------------------------------------------
+model:
+  pretrained_kwargs:
+    pretrained_model_name_or_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+
+  # Frozen-backbone training. We unfreeze (or attach LoRA) in a later milestone.
+  freeze_backbone: true
+
+  # Vector regression head — widened from cell_line_drug_response (num_classes=1).
+  # 768 -> 768 -> 768 -> 7153.
+  scalars_prediction_head:
+    num_classes: 7153
+    layers: [768, 768]
+    dropout: 0.1
+
+# ----- optimizer / schedule --------------------------------------------------
+module:
+  opt_callable:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 1.0e-4
+    weight_decay: 0.01
+
+  lr_sch_callable:
+    _target_: mammal.lr_schedulers.cosine_annealing_with_warmup_lr_scheduler
+    _partial_: True
+    T_max: 10000
+    num_warmup_steps: 25       # reduced from 200 per DECISIONS.md 2026-05-14 (schedule correction)
+    eta_min_factor: 0.1
+
+  model_dir: ${model_dir}
+  best_epoch_source:
+    monitor: validation.metrics.drug_response_vector_pcorr_macro
+    mode: max
+
+# ----- data ------------------------------------------------------------------
+data:
+  parquet_path: ${root}/data/sciplex/processed/cellcast_v0.parquet
+  hvg_path:     ${root}/data/sciplex/processed/hvg_genes.txt
+  batch_size: 32
+  num_workers: 4
+
+# ----- trainer ---------------------------------------------------------------
+trainer:
+  max_epochs: 8                # "does it train" — extended from 5 per DECISIONS.md 2026-05-14 (schedule correction)
+  default_root_dir: ${model_dir}
+  accelerator: "auto"
+  devices: 1
+  num_nodes: 1
+  num_sanity_val_steps: 0
+  accumulate_grad_batches: 1
+  log_every_n_steps: 20
+
+# ----- tracking (optional) ---------------------------------------------------
+track_clearml:
+  project_name: "cellcast"
+  task_name: ${name}
+  tags: ["cellcast", "drug_response_vector", "v0", "frozen_backbone"]
+  reuse_last_task_id: False
+  continue_last_task: False
+  offline_mode: True
+
+evaluate: false
+
+hydra:
+  run:
+    dir: ${model_dir}
+  job:
+    chdir: False

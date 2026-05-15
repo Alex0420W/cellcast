@@ -6,7 +6,7 @@ Questions that are blocking or shape-defining for upcoming milestones. Each entr
 
 ## Q1 — How do we encode a G-dimensional regression target in MAMMAL's label pipeline?
 
-**Status:** open (carries into milestone 3).
+**Status:** resolved (2026-05-14) — **tensor bypass at `LABELS_SCALARS_VALUES` confirmed end-to-end** by the 3A spike test (`scripts/spike_label_tensor.py`, results at `results/3a_spike_test.md`). Forward executes, loss is finite (0.077), backward flows nonzero gradients to all 4 head parameter tensors. See `DECISIONS.md` entry "Label encoding: tensor bypass at LABELS_SCALARS_VALUES (gated by 3A spike test)" dated 2026-05-14.
 
 **Why it matters.** MAMMAL's existing scalar regression task (`cell_line_drug_response`) emits exactly one scalar per sample. CellCast needs to emit a per-HVG log-fold-change vector — `G` scalars per sample, where `G` is on the order of 1k–5k. Widening the prediction *head* is trivial (`num_classes=1 → G`, one config edit), but the **label side** is not: MAMMAL builds its scalar targets by parsing a string literal through the `SCALARS_LITERALS` sub-tokenizer, and that pipeline assumes a single literal per sample.
 

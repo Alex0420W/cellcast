@@ -1,0 +1,326 @@
+{
+  "overall": {
+    "cellcast": {
+      "pcorr_macro": 0.12701667845249176,
+      "spearcorr_macro": 0.12149687423591204,
+      "top50_dir_acc": 0.7080701754385965,
+      "mse": 0.007000632584095001,
+      "n_conditions": 456
+    },
+    "baseline": {
+      "pcorr_macro": 0.1783827543258667,
+      "spearcorr_macro": 0.17539408004037796,
+      "top50_dir_acc": 0.7427631578947368,
+      "mse": 0.006791495718061924,
+      "n_conditions": 456
+    }
+  },
+  "per_cell_line": {
+    "A549": {
+      "cellcast": {
+        "pcorr_macro": 0.0033457856625318527,
+        "spearcorr_macro": 0.003112076816045274,
+        "top50_dir_acc": 0.7305263157894736,
+        "mse": 0.00817675981670618,
+        "n_conditions": 152
+      },
+      "baseline": {
+        "pcorr_macro": 0.048815540969371796,
+        "spearcorr_macro": 0.03175115664274249,
+        "top50_dir_acc": 0.7521052631578947,
+        "mse": 0.007961039431393147,
+        "n_conditions": 152
+      }
+    },
+    "K562": {
+      "cellcast": {
+        "pcorr_macro": 0.005390721373260021,
+        "spearcorr_macro": 0.0046786746895165435,
+        "top50_dir_acc": 0.7331578947368421,
+        "mse": 0.00827330444008112,
+        "n_conditions": 152
+      },
+      "baseline": {
+        "pcorr_macro": 0.04783414676785469,
+        "spearcorr_macro": 0.03495023515021298,
+        "top50_dir_acc": 0.7463157894736842,
+        "mse": 0.008138904348015785,
+        "n_conditions": 152
+      }
+    },
+    "MCF7": {
+      "cellcast": {
+        "pcorr_macro": -0.004188138991594315,
+        "spearcorr_macro": -0.004604981295779053,
+        "top50_dir_acc": 0.6605263157894737,
+        "mse": 0.0045518395490944386,
+        "n_conditions": 152
+      },
+      "baseline": {
+        "pcorr_macro": 0.08826445043087006,
+        "spearcorr_macro": 0.06197622576590869,
+        "top50_dir_acc": 0.7298684210526316,
+        "mse": 0.004274539649486542,
+        "n_conditions": 152
+      }
+    }
+  },
+  "per_pathway": {
+    "Antioxidant": {
+      "cellcast": {
+        "pcorr_macro": 0.1402481198310852,
+        "spearcorr_macro": 0.12536274715399515,
+        "top50_dir_acc": 0.695,
+        "mse": 0.0035777385346591473,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.17031288146972656,
+        "spearcorr_macro": 0.1594095931995593,
+        "top50_dir_acc": 0.7316666666666666,
+        "mse": 0.0035822924692183733,
+        "n_conditions": 12
+      }
+    },
+    "Apoptotic regulation": {
+      "cellcast": {
+        "pcorr_macro": 0.1447746753692627,
+        "spearcorr_macro": 0.1310543378879711,
+        "top50_dir_acc": 0.7533333333333333,
+        "mse": 0.005939253140240908,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.23121386766433716,
+        "spearcorr_macro": 0.20546438816055632,
+        "top50_dir_acc": 0.77,
+        "mse": 0.005517922341823578,
+        "n_conditions": 12
+      }
+    },
+    "Cell cycle regulation": {
+      "cellcast": {
+        "pcorr_macro": 0.14812596142292023,
+        "spearcorr_macro": 0.13444662692291498,
+        "top50_dir_acc": 0.7966666666666665,
+        "mse": 0.005092165898531675,
+        "n_conditions": 48
+      },
+      "baseline": {
+        "pcorr_macro": 0.20758478343486786,
+        "spearcorr_macro": 0.19763988131803006,
+        "top50_dir_acc": 0.8283333333333333,
+        "mse": 0.004909038078039885,
+        "n_conditions": 48
+      }
+    },
+    "DNA damage & DNA repair": {
+      "cellcast": {
+        "pcorr_macro": 0.11553788930177689,
+        "spearcorr_macro": 0.10849462017496757,
+        "top50_dir_acc": 0.63375,
+        "mse": 0.003968429751694202,
+        "n_conditions": 48
+      },
+      "baseline": {
+        "pcorr_macro": 0.14594867825508118,
+        "spearcorr_macro": 0.1511368780070349,
+        "top50_dir_acc": 0.6733333333333333,
+        "mse": 0.00404626177623868,
+        "n_conditions": 48
+      }
+    },
+    "Epigenetic regulation": {
+      "cellcast": {
+        "pcorr_macro": 0.13592997193336487,
+        "spearcorr_macro": 0.1282428166419418,
+        "top50_dir_acc": 0.7344444444444443,
+        "mse": 0.010551802814006805,
+        "n_conditions": 108
+      },
+      "baseline": {
+        "pcorr_macro": 0.2067551612854004,
+        "spearcorr_macro": 0.19150639486098633,
+        "top50_dir_acc": 0.7616666666666667,
+        "mse": 0.010010997764766216,
+        "n_conditions": 108
+      }
+    },
+    "Focal adhesion signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.12069377303123474,
+        "spearcorr_macro": 0.1060336925315622,
+        "top50_dir_acc": 0.6849999999999999,
+        "mse": 0.0038669337518513203,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.17804865539073944,
+        "spearcorr_macro": 0.16794999708609365,
+        "top50_dir_acc": 0.6916666666666665,
+        "mse": 0.003814546624198556,
+        "n_conditions": 12
+      }
+    },
+    "HIF signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.13083483278751373,
+        "spearcorr_macro": 0.11863240244973489,
+        "top50_dir_acc": 0.7316666666666666,
+        "mse": 0.0052165980450809,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.18545500934123993,
+        "spearcorr_macro": 0.1760367042938142,
+        "top50_dir_acc": 0.7766666666666667,
+        "mse": 0.005058560520410538,
+        "n_conditions": 12
+      }
+    },
+    "JAK/STAT signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.1366204172372818,
+        "spearcorr_macro": 0.12625692587960957,
+        "top50_dir_acc": 0.6900000000000001,
+        "mse": 0.0038922724779695272,
+        "n_conditions": 48
+      },
+      "baseline": {
+        "pcorr_macro": 0.1830105036497116,
+        "spearcorr_macro": 0.1808387362668347,
+        "top50_dir_acc": 0.7370833333333334,
+        "mse": 0.003841095371171832,
+        "n_conditions": 48
+      }
+    },
+    "Metabolic regulation": {
+      "cellcast": {
+        "pcorr_macro": 0.13113218545913696,
+        "spearcorr_macro": 0.11759404155580971,
+        "top50_dir_acc": 0.7033333333333335,
+        "mse": 0.0029069690499454737,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.15232177078723907,
+        "spearcorr_macro": 0.15084534742949995,
+        "top50_dir_acc": 0.6583333333333333,
+        "mse": 0.0030566079076379538,
+        "n_conditions": 12
+      }
+    },
+    "Neuronal signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.11065496504306793,
+        "spearcorr_macro": 0.09590358176177334,
+        "top50_dir_acc": 0.5683333333333334,
+        "mse": 0.003503513289615512,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.13744761049747467,
+        "spearcorr_macro": 0.14160150546742795,
+        "top50_dir_acc": 0.61,
+        "mse": 0.003639918752014637,
+        "n_conditions": 12
+      }
+    },
+    "Nuclear receptor signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.1336274892091751,
+        "spearcorr_macro": 0.11804664455632947,
+        "top50_dir_acc": 0.6483333333333333,
+        "mse": 0.0032687231432646513,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.15354427695274353,
+        "spearcorr_macro": 0.15291392036560414,
+        "top50_dir_acc": 0.6816666666666666,
+        "mse": 0.0033866907469928265,
+        "n_conditions": 12
+      }
+    },
+    "Other": {
+      "cellcast": {
+        "pcorr_macro": 0.14501109719276428,
+        "spearcorr_macro": 0.12999489455164961,
+        "top50_dir_acc": 0.7166666666666667,
+        "mse": 0.0036212762352079153,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.16593298316001892,
+        "spearcorr_macro": 0.1683054015614134,
+        "top50_dir_acc": 0.7833333333333333,
+        "mse": 0.0036747802514582872,
+        "n_conditions": 12
+      }
+    },
+    "PKC signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.11723726242780685,
+        "spearcorr_macro": 0.11416470127161518,
+        "top50_dir_acc": 0.745,
+        "mse": 0.0229444932192564,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.17623884975910187,
+        "spearcorr_macro": 0.15139874934000777,
+        "top50_dir_acc": 0.785,
+        "mse": 0.02190685085952282,
+        "n_conditions": 12
+      }
+    },
+    "Protein folding & Protein degradation": {
+      "cellcast": {
+        "pcorr_macro": 0.14340485632419586,
+        "spearcorr_macro": 0.12154867600001142,
+        "top50_dir_acc": 0.7233333333333332,
+        "mse": 0.014009539037942886,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.17829589545726776,
+        "spearcorr_macro": 0.17574257766579157,
+        "top50_dir_acc": 0.7733333333333333,
+        "mse": 0.013680842705070972,
+        "n_conditions": 12
+      }
+    },
+    "TGF/BMP signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.12268564850091934,
+        "spearcorr_macro": 0.11031038914076179,
+        "top50_dir_acc": 0.615,
+        "mse": 0.0038326361682265997,
+        "n_conditions": 12
+      },
+      "baseline": {
+        "pcorr_macro": 0.15552982687950134,
+        "spearcorr_macro": 0.15573587716503864,
+        "top50_dir_acc": 0.6599999999999999,
+        "mse": 0.003903185948729515,
+        "n_conditions": 12
+      }
+    },
+    "Tyrosine kinase signaling": {
+      "cellcast": {
+        "pcorr_macro": 0.13179390132427216,
+        "spearcorr_macro": 0.12488582835746098,
+        "top50_dir_acc": 0.705,
+        "mse": 0.007759792264550924,
+        "n_conditions": 72
+      },
+      "baseline": {
+        "pcorr_macro": 0.1769011914730072,
+        "spearcorr_macro": 0.18140543670606332,
+        "top50_dir_acc": 0.7488888888888889,
+        "mse": 0.0075950026512146,
+        "n_conditions": 72
+      }
+    }
+  }
+}
