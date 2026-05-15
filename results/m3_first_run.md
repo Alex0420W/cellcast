@@ -147,3 +147,37 @@ Per the M3 rule "Do not improvise architectural changes during 3D — decisions 
 - Pipeline works end-to-end. Training reproducible. Tests passing.
 - Model does not meet M3 success criteria. **Stopping.** No scaling, no architectural improvising.
 - Next: milestone 4 begins by picking among the hypotheses above. Recommend starting with hypothesis 1 (unfreeze / LoRA) — it has the highest expected information value because it directly tests "is the frozen MAMMAL representation useful for this task at all?"
+
+---
+
+## Addendum: interpretation of the negative result (added post-3D)
+
+The headline numbers — CellCast losing to the StratifiedMeanBaseline by ~0.05 pcorr — undersell what we actually learned. The per-cell-line decomposition is the load-bearing diagnostic:
+
+| | A549 | K562 | MCF7 |
+|---|---|---|---|
+| CellCast pcorr (within-cell-line) | +0.005 | +0.005 | −0.004 |
+| Overall pcorr | | +0.127 | |
+
+Per-cell-line pcorr is near zero. The overall pcorr of 0.127 comes almost entirely from between-cell-line variance. **The model is learning "this is A549 vs K562 vs MCF7" from the input control pseudobulk; it is not meaningfully learning "this is drug X vs drug Y."**
+
+This is a precise architectural diagnosis, not a "training didn't work" outcome. The drug-conditioning signal is not propagating to the readout in a way that lets the head produce drug-specific predictions. The baseline beats CellCast because the baseline does the same thing (return the per-stratum mean) in closed form, without the noise overhead of a learned approximation.
+
+### Why this is a productive negative result, not a failure
+
+1. **The pipeline works end-to-end.** Data → preprocessing → task → training → evaluation → report, all reproducible, all tested, all documented.
+2. **The diagnosis is sharp.** We know specifically where the failure lives (drug signal → readout pathway) and we have testable hypotheses to address it.
+3. **The result is robust.** Training was healthy: monotonic val improvement, no overfitting, no schedule pathology, internal val ≈ held-out test. The model converged on its representation; that representation just isn't using the drug.
+4. **The alternative was worse.** A model that barely beat the baseline (by 0.02 pcorr, say) would have hidden the same architectural issue under noise. We would have spent weeks chasing tuning improvements before realizing the drug-conditioning didn't land. This result forced the diagnosis early.
+
+### Implications for milestone 4
+
+The five hypotheses in the original report stand, but re-prioritized by expected information value:
+
+1. **First — Probe the signal pathway** (was H4): does the SMILES input meaningfully influence the `<MASK>` hidden state? Does the head use that influence? Cheap to test, gates everything else.
+2. **Architectural reframe** (was H3): predict residual-to-stratum-mean rather than full LFC. This matches how ChemCPA/CPA frame the task and may be the actual fix.
+3. **Unfreeze the backbone** (was H1): LoRA on MAMMAL's encoder. Highest-cost lever; reserve for after the diagnostic.
+4. **Better baselines** (was H5): add ChemCPA and fingerprint-MLP for comparison. Parallel work, not a fix.
+5. **Per-cell training** (was H2): deferred. Bottleneck is signal usage, not signal volume.
+
+The milestone-3 result is not a setback — it's the kind of clear diagnostic that turns "build a thing and hope it works" into actual research.
