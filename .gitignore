@@ -232,3 +232,6 @@ results/p6_predictions.npz
 # M4B.1: per-condition test predictions (residual + reconstructed full LFC) is 38MB;
 # regenerable from `python scripts/evaluate_residual.py`
 results/cellcast_residual_predictions.npz
+# M4B.2: per-condition test predictions (residual + reconstructed full LFC) is 38MB;
+# regenerable from `python scripts/evaluate_residual_lora.py`
+results/cellcast_residual_lora_predictions.npz

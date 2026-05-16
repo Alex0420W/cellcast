@@ -1,0 +1,125 @@
+# CellCast v0 — RESIDUAL TARGET + LoRA on encoder (M4B.2)
+#
+# Identical to cellcast_v0_residual.yaml except:
+#   - LoRA (rank 32) on T5 encoder Q/K/V/O + FFN (wi_0/wi_1/wo) projections
+#   - Param groups: head + dose rows at lr=1e-4, LoRA at lr=5e-4
+#   - Init from M3-trained head ckpt (not from scratch — head already learned
+#     the per-stratum mean structure that's now subtracted out by residual target)
+#   - Run name: cellcast_v0_residual_lora32
+
+name: cellcast_v0_residual_lora32_seed_1234
+root: "."
+model_dir: ${root}/runs/${name}
+seed: 1234
+
+# ----- task ------------------------------------------------------------------
+task:
+  _target_: src.tasks.drug_response_residual.DrugResponseResidualTask
+  _partial_: True
+  name: drug_response_residual
+  seed: ${seed}
+  num_HVGs: 7153
+  encoder_input_max_seq_len: 1500
+  residual_stratum_source: inner_train_drugs
+
+# ----- tokenizer -------------------------------------------------------------
+tokenizer:
+  tokenizer_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+  extra_special_tokens:
+    - <DOSE_10nM>
+    - <DOSE_100nM>
+    - <DOSE_1000nM>
+    - <DOSE_10000nM>
+
+# ----- model -----------------------------------------------------------------
+model:
+  pretrained_kwargs:
+    pretrained_model_name_or_path: ibm/biomed.omics.bl.sm.ma-ted-458m
+
+  # Backbone is no longer fully frozen — LoRA adapters add ~5.6M trainable
+  # params on encoder Q/K/V/O + FFN. Backbone WEIGHTS remain frozen; only
+  # the LoRA A/B matrices update. Head + 4 dose rows continue to train as
+  # before.
+  freeze_backbone: lora_only
+
+  scalars_prediction_head:
+    num_classes: 7153
+    layers: [768, 768]
+    dropout: 0.1
+
+# ----- LoRA ------------------------------------------------------------------
+lora:
+  rank: 32
+  alpha: 32              # alpha == rank → scaling factor 1.0 (default starting point)
+  dropout: 0.1
+  # Target modules: T5 v1.1 self-attention QKV + output projection + gated FFN.
+  # Programmatically resolved to ENCODER-only paths in scripts/train_residual_lora.py
+  # (avoids decoder match since we're not using the decoder).
+  target_module_suffixes:
+    - q
+    - k
+    - v
+    - o
+    - wi_0
+    - wi_1
+    - wo
+  scope: encoder_only    # do not target decoder, embedding, or head
+  expected_param_count: 5588992  # 12 blocks × (4 attn × 2 × 32 × 768 + 2 wi × 32 × (768+2048) + 1 wo × 32 × (2048+768))
+
+# ----- optimizer / schedule --------------------------------------------------
+module:
+  # Two parameter groups with separate LRs:
+  param_groups:
+    head_and_dose:
+      lr: 1.0e-4
+      weight_decay: 0.01
+      param_name_patterns: ["scalars_prediction_head.*", "shared.weight"]   # M3-style
+    lora:
+      lr: 5.0e-4         # 5x higher; LoRA modules typically benefit from larger LR
+      weight_decay: 0.01
+      param_name_patterns: ["lora_*"]   # peft adds names like "lora_A", "lora_B"
+
+  opt_callable:
+    _target_: torch.optim.AdamW
+    _partial_: true
+
+  lr_sch_callable:
+    _target_: mammal.lr_schedulers.cosine_annealing_with_warmup_lr_scheduler
+    _partial_: True
+    T_max: 10000
+    num_warmup_steps: 25
+    eta_min_factor: 0.1
+
+  model_dir: ${model_dir}
+  best_epoch_source:
+    monitor: val/pcorr_macro      # full-LFC reconstruction pcorr (pred + stratum_mean vs true_LFC)
+    mode: max
+
+# ----- data ------------------------------------------------------------------
+data:
+  parquet_path: ${root}/data/sciplex/processed/cellcast_v0.parquet
+  hvg_path:     ${root}/data/sciplex/processed/hvg_genes.txt
+  splits_path:  ${root}/data/sciplex/processed/splits.json
+  batch_size: 16
+  num_workers: 2
+
+# ----- trainer ---------------------------------------------------------------
+trainer:
+  max_epochs: 8
+  default_root_dir: ${model_dir}
+  accelerator: "auto"
+  devices: 1
+  num_nodes: 1
+  num_sanity_val_steps: 2
+  accumulate_grad_batches: 1
+  log_every_n_steps: 1
+
+# ----- init from M3 head -----------------------------------------------------
+init:
+  m3_head_checkpoint: ${root}/runs/cellcast_v0/checkpoints/best-7-816-pcorr=0.1282.ckpt
+  load_strategy: head_and_dose_rows_only   # do NOT inherit M3's residual-incompatible state
+                                            # (M3 head was trained on full LFC; we keep its
+                                            # weights as init and let the residual gradient
+                                            # adjust them)
+
+evaluate: false
